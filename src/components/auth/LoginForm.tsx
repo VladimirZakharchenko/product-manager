@@ -13,15 +13,10 @@ type LoginFormValues = {
 
 export const LoginForm = () => {
   const [form] = Form.useForm<LoginFormValues>();
-  const { login, isLoading, error, clearError } = useAuthStore();
+  const { login, isLoading, error, clearError, checkSession } = useAuthStore();
 
   useEffect(() => {
-    const sessionToken = sessionStorage.getItem('token');
-    const localToken = localStorage.getItem('auth-storage');
-    
-    if (sessionToken || localToken) {
-      // Токен уже есть в store через persist
-    }
+    checkSession();
   }, []);
 
   const handleClearUsername = () => {
@@ -52,7 +47,7 @@ export const LoginForm = () => {
               showIcon
               closable
               onClose={clearError}
-              style={{ marginBottom: 16 }}
+              style={{ marginBottom: 24 }}
             />
           )}
 
@@ -60,7 +55,7 @@ export const LoginForm = () => {
             form={form}
             name="login"
             initialValues={{ remember: false }}
-            style={{ maxWidth: 360 }}
+            style={{ maxWidth: '100%' }}
             onFinish={onFinish}
             layout="vertical"
           >
@@ -81,6 +76,7 @@ export const LoginForm = () => {
                     style={{ cursor: 'pointer' }}
                   />
                 }
+                size="large"
               />
             </Form.Item>
 
@@ -96,6 +92,7 @@ export const LoginForm = () => {
                 prefix={<LockOutlined />}
                 type="password"
                 placeholder="Пароль"
+                size="large"
               />
             </Form.Item>
 
@@ -113,17 +110,21 @@ export const LoginForm = () => {
                 type="primary" 
                 htmlType="submit"
                 loading={isLoading}
+                size="large"
               >
                 Войти
               </Button>
-              <div style={{ marginTop: 8, textAlign: 'center' }}>
+              <div style={{ marginTop: 12, textAlign: 'center' }}>
                 или <a href="#">Нет аккаунта?</a>
-              </div>
-              <div style={{ marginTop: 8, fontSize: 12, color: '#999' }}>
-                Тестовые данные: emilys / emilyspass
               </div>
             </Form.Item>
           </Form>
+
+          <div className="test-credentials">
+            <strong>Тестовые данные для входа:</strong>
+            <div>Логин: emilys</div>
+            <div>Пароль: emilyspass</div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,33 +1,171 @@
-.header {
-    padding: 24px;
+.product-page {
+    min-height: 100vh;
+    background-color: #F9F9F9;
+}
+
+/* Верхний хедер */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
     background: white;
     border-bottom: 1px solid #f0f0f0;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-.header h1 {
+.main-header h1 {
     margin: 0;
     font-size: 24px;
     color: #232323;
+    flex: 0 0 auto;
+    min-width: 120px;
 }
 
-/* Стили для таблицы */
-.ant-table-wrapper {
-    background: white;
+.search-container {
+    flex: 1;
+    max-width: 55%;
+    margin: 0 24px;
+}
+
+.search-container .ant-input-affix-wrapper {
+    width: 100%;
     border-radius: 8px;
+}
+
+.search-container .ant-input-affix-wrapper input {
+    font-size: 14px;
+}
+
+/* Контент */
+.content {
+    padding: 24px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Карточка таблицы */
+.table-card {
+    background: white;
+    border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    width: 100%;
+    overflow: hidden;
 }
 
-/* Анимация загрузки */
-.loading-spinner {
+/* Заголовок карточки таблицы */
+.table-card-header {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    min-height: 400px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    background: white;
 }
 
-/* Подсветка низкого рейтинга */
-.low-rating {
-    color: #ff4d4f;
+.table-card-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #232323;
     font-weight: 500;
+}
+
+/* Светло-синяя кнопка добавления */
+.add-button {
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+    color: #1890ff;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: none;
+}
+
+.add-button:hover {
+    background-color: #bae7ff !important;
+    border-color: #69c0ff !important;
+    color: #096dd9 !important;
+}
+
+.add-button:active {
+    background-color: #91d5ff !important;
+    border-color: #40a9ff !important;
+    color: #0050b3 !important;
+}
+
+/* Таблица */
+.products-table {
+    width: 100%;
+    border: none;
+}
+
+.products-table .ant-table {
+    border-radius: 0;
+}
+
+.products-table .ant-table-container {
+    border-radius: 0;
+}
+
+.products-table .ant-table-thead > tr > th {
+    background-color: #FAFAFA;
+    font-weight: 500;
+    color: #232323;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 12px 24px;
+}
+
+.products-table .ant-table-tbody > tr > td {
+    padding: 12px 24px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.products-table .ant-table-tbody > tr:hover > td {
+    background-color: #F5F5F5;
+}
+
+/* Пагинация */
+.products-table .ant-table-pagination {
+    margin: 16px 24px !important;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.products-table .ant-table-pagination .ant-pagination-total-text {
+    margin-right: auto;
+    color: #666;
+}
+
+/* Убираем лишние границы */
+.products-table .ant-table.ant-table-bordered > .ant-table-container {
+    border: none;
+}
+
+.products-table .ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table > thead > tr > th,
+.products-table .ant-table.ant-table-bordered > .ant-table-container > .ant-table-body > table > tbody > tr > td {
+    border-right: none;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .main-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .search-container {
+        max-width: 100%;
+        margin: 0;
+    }
+    
+    .table-card-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    
+    .content {
+        padding: 16px;
+    }
 }

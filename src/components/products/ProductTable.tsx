@@ -2,7 +2,8 @@ import {
   EllipsisOutlined, 
   PlusCircleOutlined, 
   SearchOutlined,
-  LogoutOutlined 
+  LogoutOutlined,
+  PlusOutlined
 } from '@ant-design/icons';
 import { Button, Space, Input, Table, Spin } from 'antd';
 import type { TableProps } from 'antd';
@@ -12,10 +13,13 @@ import { useAuthStore } from '../../store/authStore';
 import { useEffect, useState } from 'react';
 import { AddProductModal } from './AddProductModal';
 import type { Product } from '../../types/product.types';
+import toast from 'react-hot-toast';
 
 export const ProductTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(20);
   
   const { 
     filteredProducts, 
@@ -39,9 +43,19 @@ export const ProductTable = () => {
     
     const timeout = setTimeout(() => {
       searchProducts(value);
+      setCurrentPage(1);
     }, 500);
     
     setSearchTimeout(timeout);
+  };
+
+  const handleLogout = () => {
+    logout();
+    toast.success('Вы успешно вышли из системы');
+  };
+
+  const handleTableChange = (pagination: any) => {
+    setCurrentPage(pagination.current);
   };
 
   const columns: TableProps<Product>['columns'] = [
@@ -54,6 +68,12 @@ export const ProductTable = () => {
       onHeaderCell: () => ({
         onClick: () => setSortConfig('title' as keyof Product),
       }),
+      render: (text: string, record: Product) => (
+        <div>
+          <div style={{ fontWeight: 500 }}>{text}</div>
+          <div style={{ fontSize: '12px', color: '#999' }}>{record.category}</div>
+        </div>
+      ),
     },
     {
       title: 'Вендор',
@@ -83,7 +103,7 @@ export const ProductTable = () => {
       }),
       render: (rating: number) => (
         <span style={{ color: rating < 3 ? '#ff4d4f' : 'inherit', fontWeight: rating < 3 ? 500 : 'normal' }}>
-          {rating ? rating.toFixed(1) : '0.0'}
+          {rating ? rating.toFixed(1) : '0.0'}/5
         </span>
       ),
     },
@@ -99,7 +119,7 @@ export const ProductTable = () => {
       render: (price: number) => price ? price.toFixed(2) : '0.00',
     },
     {
-      title: 'Действия',
+      title: '',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
@@ -130,54 +150,73 @@ export const ProductTable = () => {
     );
   }
 
+  const totalItems = filteredProducts.length;
+
+  const paginationConfig = {
+    current: currentPage,
+    pageSize: pageSize,
+    total: totalItems,
+    showSizeChanger: false,
+    showTotal: (total: number, range: [number, number]) => (
+      <span>Показано {range[0]}-{range[1]} из {total}</span>
+    ),
+  };
+
   return (
-    <>
-      <header className="header">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <h1>Товары</h1>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <Input
-              placeholder="Найти товар..."
-              prefix={<SearchOutlined />}
-              onChange={(e) => handleSearch(e.target.value)}
-              style={{ width: 300 }}
-              allowClear
-            />
+    <div className="product-page">
+      <header className="main-header">
+        <h1>Товары</h1>
+        <div className="search-container">
+          <Input
+            placeholder="Найти товар..."
+            prefix={<SearchOutlined />}
+            onChange={(e) => handleSearch(e.target.value)}
+            allowClear
+            size="large"
+          />
+        </div>
+        <Button 
+          icon={<LogoutOutlined />} 
+          onClick={handleLogout}
+          danger
+          size="large"
+        >
+          Выйти
+        </Button>
+      </header>
+
+      <main className="content">
+        <div className="table-card">
+          <div className="table-card-header">
+            <h2>Все позиции</h2>
             <Button 
               type="primary" 
+              icon={<PlusOutlined />}
               onClick={() => setIsModalOpen(true)}
+              size="large"
+              className="add-button"
             >
-              Добавить товар
-            </Button>
-            <Button 
-              icon={<LogoutOutlined />} 
-              onClick={logout}
-              danger
-            >
-              Выйти
+              Добавить
             </Button>
           </div>
+
+          <Table<Product>
+            rowSelection={{ type: 'checkbox', ...rowSelection }}
+            columns={columns}
+            dataSource={filteredProducts}
+            rowKey="id"
+            loading={isLoading}
+            onChange={handleTableChange}
+            pagination={paginationConfig}
+            className="products-table"
+          />
         </div>
-      </header>
-      <main style={{ padding: 24 }}>
-        <Table<Product>
-          rowSelection={{ type: 'checkbox', ...rowSelection }}
-          columns={columns}
-          dataSource={filteredProducts}
-          rowKey="id"
-          loading={isLoading}
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showTotal: (total) => `Всего ${total} товаров`,
-          }}
-        />
       </main>
       
       <AddProductModal 
         open={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
       />
-    </>
+    </div>
   );
 };

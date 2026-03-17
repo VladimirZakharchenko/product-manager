@@ -1,9 +1,9 @@
 .wrapper-auth {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: #F9F9F9; /* Изменено с градиента на #F9F9F9 */
 }
 
 .auth-windows {
@@ -37,4 +37,57 @@
     font-weight: normal;
     color: #666;
     margin-bottom: 32px;
+}
+
+/* Стили для формы авторизации */
+.auth-inner-windows .ant-form-item-label {
+    padding-bottom: 4px;
+}
+
+.auth-inner-windows .ant-form-item-label label {
+    font-size: 14px;
+    color: #232323;
+}
+
+.auth-inner-windows .ant-input-affix-wrapper {
+    border-radius: 8px;
+    border: 1px solid #EDEDED;
+}
+
+.auth-inner-windows .ant-input-affix-wrapper:hover,
+.auth-inner-windows .ant-input-affix-wrapper:focus {
+    border-color: #40a9ff;
+}
+
+.auth-inner-windows .ant-btn-primary {
+    background-color: #1890ff;
+    border-radius: 8px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.auth-inner-windows .ant-checkbox-wrapper {
+    color: #666;
+}
+
+.auth-inner-windows a {
+    color: #1890ff;
+}
+
+/* Тестовые данные */
+.test-credentials {
+    margin-top: 16px;
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #666;
+    border: 1px solid #EDEDED;
+}
+
+.test-credentials strong {
+    color: #232323;
+    display: block;
+    margin-bottom: 4px;
 }
