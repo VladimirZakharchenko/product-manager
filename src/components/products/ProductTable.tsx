@@ -90,7 +90,7 @@ export const ProductTable = () => {
       title: 'Артикул',
       dataIndex: 'article',
       key: 'article',
-      render: (_, record) => `ART-${record.id}`,
+      render: (_, record) => record.sku,
     },
     {
       title: 'Оценка',

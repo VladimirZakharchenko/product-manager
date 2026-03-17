@@ -38,7 +38,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
       const response = await axios.get('https://dummyjson.com/products?limit=120');
       const products = response.data.products.map((p: any) => ({
         ...p,
-        article: `ART-${p.id}`,
+        article: p.sku,
         vendor: p.brand,
         name: p.title,
         grade: p.rating,
@@ -66,7 +66,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
       const response = await axios.get(`https://dummyjson.com/products/search?q=${query}`);
       const products = response.data.products.map((p: any) => ({
         ...p,
-        article: `ART-${p.id}`,
+        article: p.sku,
         vendor: p.brand,
         name: p.title,
         grade: p.rating,
