@@ -1,16 +1,27 @@
-import { LoginForm } from './components/auth/LoginForm'
-import { ProductTable } from './components/products/ProductTable'
-import './App.css'
+import { LoginForm } from './components/auth/LoginForm';
+import { ProductTable } from './components/products/ProductTable';
+import { useAuthStore } from './store/authStore';
+import { Toaster } from 'react-hot-toast';
+import './App.css';
 
 function App() {
-
-  const isLogin = false
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   return (
     <>
-      { isLogin ? <LoginForm /> : <ProductTable /> }
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+        }}
+      />
+      {!isAuthenticated ? <LoginForm /> : <ProductTable />}
     </>
-  )
+  );
 }
 
-export default App
+export default App;

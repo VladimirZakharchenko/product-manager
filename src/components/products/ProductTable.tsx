@@ -1,116 +1,183 @@
-import { CloseOutlined, EllipsisOutlined, LockOutlined, PlusCircleOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Flex, Space, Input, Table } from 'antd';
+import { 
+  EllipsisOutlined, 
+  PlusCircleOutlined, 
+  SearchOutlined,
+  LogoutOutlined 
+} from '@ant-design/icons';
+import { Button, Space, Input, Table, Spin } from 'antd';
 import type { TableProps } from 'antd';
-import './Product.css'
-import { useState } from 'react';
-
-interface DataType {
-  key: React.Key;
-  article: string;
-  name: string;
-  vendor: string;
-  grade: number;
-  price: number;
-}
-
-const columns: TableProps<DataType>['columns'] = [
-  {
-    title: 'Наименование',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Вендор',
-    dataIndex: 'vendor',
-    key: 'vendor',
-  },
-  {
-    title: 'Артикул',
-    dataIndex: 'article',
-    key: 'article',
-  },
-  {
-    title: 'Оценка',
-    dataIndex: 'grade',
-    key: 'grade',
-  },
-  {
-    title: 'Цена, ₽',
-    dataIndex: 'price',
-    key: 'price',
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (_) => (
-      <Space size="medium">
-        <PlusCircleOutlined />
-        <EllipsisOutlined />
-      </Space>
-    ),
-  },
-];
-
-const data: DataType[] = [
-  {
-    key: '1',
-    name: 'Dayson',
-    vendor: 'Vendor1',
-    article: '2222',
-    grade: 4.5,
-    price: 100
-  },
-  {
-    key: '2',
-    name: 'HP',
-    vendor: 'Vendor1',
-    article: '2222',
-    grade: 4.5,
-    price: 100
-  },
-  {
-    key: '3',
-    name: 'Dayson',
-    vendor: 'Vendor3',
-    article: '2222',
-    grade: 4.5,
-    price: 100
-  },
-  {
-    key: '4',
-    name: 'Dayson',
-    vendor: 'Vendor2',
-    article: '2222',
-    grade: 4.5,
-    price: 100
-  },
-];
-
-const rowSelection: TableProps<DataType>['rowSelection'] = {
-  onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  getCheckboxProps: (record: DataType) => ({
-    disabled: record.name === 'Disabled User', // Column configuration not to be checked
-    name: record.name,
-  }),
-};
+import './Product.css';
+import { useProductStore } from '../../store/productStore';
+import { useAuthStore } from '../../store/authStore';
+import { useEffect, useState } from 'react';
+import { AddProductModal } from './AddProductModal';
+import type { Product } from '../../types/product.types';
 
 export const ProductTable = () => {
- 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout>();
+  
+  const { 
+    filteredProducts, 
+    isLoading, 
+    fetchProducts, 
+    searchProducts,
+    setSortConfig,
+    sortConfig
+  } = useProductStore();
+  
+  const logout = useAuthStore(state => state.logout);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const handleSearch = (value: string) => {
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    const timeout = setTimeout(() => {
+      searchProducts(value);
+    }, 500);
+    
+    setSearchTimeout(timeout);
+  };
+
+  const columns: TableProps<Product>['columns'] = [
+    {
+      title: 'Наименование',
+      dataIndex: 'title',
+      key: 'title',
+      sorter: true,
+      sortOrder: sortConfig.key === 'title' ? sortConfig.direction : null,
+      onHeaderCell: () => ({
+        onClick: () => setSortConfig('title' as keyof Product),
+      }),
+    },
+    {
+      title: 'Вендор',
+      dataIndex: 'brand',
+      key: 'brand',
+      sorter: true,
+      sortOrder: sortConfig.key === 'brand' ? sortConfig.direction : null,
+      onHeaderCell: () => ({
+        onClick: () => setSortConfig('brand' as keyof Product),
+      }),
+      render: (brand: string) => brand || '—',
+    },
+    {
+      title: 'Артикул',
+      dataIndex: 'article',
+      key: 'article',
+      render: (_, record) => `ART-${record.id}`,
+    },
+    {
+      title: 'Оценка',
+      dataIndex: 'rating',
+      key: 'rating',
+      sorter: true,
+      sortOrder: sortConfig.key === 'rating' ? sortConfig.direction : null,
+      onHeaderCell: () => ({
+        onClick: () => setSortConfig('rating' as keyof Product),
+      }),
+      render: (rating: number) => (
+        <span style={{ color: rating < 3 ? '#ff4d4f' : 'inherit', fontWeight: rating < 3 ? 500 : 'normal' }}>
+          {rating ? rating.toFixed(1) : '0.0'}
+        </span>
+      ),
+    },
+    {
+      title: 'Цена, ₽',
+      dataIndex: 'price',
+      key: 'price',
+      sorter: true,
+      sortOrder: sortConfig.key === 'price' ? sortConfig.direction : null,
+      onHeaderCell: () => ({
+        onClick: () => setSortConfig('price' as keyof Product),
+      }),
+      render: (price: number) => price ? price.toFixed(2) : '0.00',
+    },
+    {
+      title: 'Действия',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <PlusCircleOutlined 
+            style={{ cursor: 'pointer', color: '#52c41a' }} 
+            onClick={() => console.log('Add to cart:', record)}
+          />
+          <EllipsisOutlined 
+            style={{ cursor: 'pointer' }} 
+            onClick={() => console.log('More options:', record)}
+          />
+        </Space>
+      ),
+    },
+  ];
+
+  const rowSelection: TableProps<Product>['rowSelection'] = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    },
+  };
+
+  if (isLoading && !filteredProducts.length) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Spin size="large" tip="Загрузка товаров..." />
+      </div>
+    );
+  }
+
   return (
     <>
       <header className="header">
-        <div>Товары</div>
-        <Input placeholder="Найти" prefix={<SearchOutlined />} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <h1>Товары</h1>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Input
+              placeholder="Найти товар..."
+              prefix={<SearchOutlined />}
+              onChange={(e) => handleSearch(e.target.value)}
+              style={{ width: 300 }}
+              allowClear
+            />
+            <Button 
+              type="primary" 
+              onClick={() => setIsModalOpen(true)}
+            >
+              Добавить товар
+            </Button>
+            <Button 
+              icon={<LogoutOutlined />} 
+              onClick={logout}
+              danger
+            >
+              Выйти
+            </Button>
+          </div>
+        </div>
       </header>
-      <main>
-        <Table<DataType>
+      <main style={{ padding: 24 }}>
+        <Table<Product>
           rowSelection={{ type: 'checkbox', ...rowSelection }}
           columns={columns}
-          dataSource={data}
+          dataSource={filteredProducts}
+          rowKey="id"
+          loading={isLoading}
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showTotal: (total) => `Всего ${total} товаров`,
+          }}
         />
       </main>
+      
+      <AddProductModal 
+        open={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </>
   );
 };

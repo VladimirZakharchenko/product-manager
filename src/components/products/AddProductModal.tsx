@@ -1,31 +1,93 @@
-export const AddProductModal = () => {
+import { Modal, Form, Input, InputNumber, Button } from 'antd';
+import { useProductStore } from '../../store/productStore';
+
+interface AddProductModalProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+interface ProductFormValues {
+  title: string;
+  price: number;
+  brand: string;
+  article?: string;
+}
+
+export const AddProductModal = ({ open, onClose }: AddProductModalProps) => {
+  const [form] = Form.useForm<ProductFormValues>();
+  const addProduct = useProductStore(state => state.addProduct);
+
+  const handleSubmit = (values: ProductFormValues) => {
+    addProduct({
+      title: values.title,
+      price: values.price,
+      brand: values.brand,
+      article: values.article || `ART-${Date.now()}`,
+    });
+    
+    form.resetFields();
+    onClose();
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl">
-        <h3 className="text-xl font-bold mb-4">Добавить новый товар</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="col-span-2">
-            <label className="block text-sm mb-1">Наименование</label>
-            <input type="text" className="w-full border rounded p-2" placeholder="Название товара" />
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Цена</label>
-            <input type="number" className="w-full border rounded p-2" />
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Вендор</label>
-            <input type="text" className="w-full border rounded p-2" />
-          </div>
-          <div className="col-span-2">
-            <label className="block text-sm mb-1">Артикул</label>
-            <input type="text" className="w-full border rounded p-2" />
-          </div>
-        </div>
-        <div className="flex justify-end gap-3 mt-6">
-          <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Отмена</button>
-          <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Сохранить</button>
-        </div>
-      </div>
-    </div>
+    <Modal
+      title="Добавить новый товар"
+      open={open}
+      onCancel={onClose}
+      footer={null}
+      width={600}
+    >
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+        initialValues={{ price: 0 }}
+      >
+        <Form.Item
+          name="title"
+          label="Наименование"
+          rules={[{ required: true, message: 'Введите наименование товара' }]}
+        >
+          <Input placeholder="Название товара" />
+        </Form.Item>
+
+        <Form.Item
+          name="brand"
+          label="Вендор"
+          rules={[{ required: true, message: 'Введите вендора' }]}
+        >
+          <Input placeholder="Вендор" />
+        </Form.Item>
+
+        <Form.Item
+          name="price"
+          label="Цена"
+          rules={[{ required: true, message: 'Введите цену' }]}
+        >
+          <InputNumber
+            style={{ width: '100%' }}
+            min={0}
+            step={0.01}
+            placeholder="Цена"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="article"
+          label="Артикул"
+        >
+          <Input placeholder="Артикул (необязательно)" />
+        </Form.Item>
+
+        <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
+          <Button style={{ marginRight: 8 }} onClick={onClose}>
+            Отмена
+          </Button>
+          <Button type="primary" htmlType="submit">
+            Сохранить
+          </Button>
+        </Form.Item>
+      </Form>
+    </Modal>
   );
 };

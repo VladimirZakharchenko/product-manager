@@ -3,46 +3,38 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .auth-windows {
-    font-size: 10px;
     width: 527px;
-    height: 716px;
     background-color: #FFF;
-    border-radius: 4em;
+    border-radius: 20px;
     border: 1px solid #EDEDED;
     padding: 6px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
 }
 
-/* .auth-inner-windows {
+.auth-inner-windows {
     background: linear-gradient(
         to bottom,
-        rgba(35, 35, 35, 0.03) 0%,
+        rgba(35, 35, 35, 0.02) 0%,
         rgba(35, 35, 35, 0) 50%
     );
-    height: 100%;
-    border-radius: 3.4em;
-    padding: 4.8em;
-    border: 1px solid transparent;
-    border-image: linear-gradient(to bottom, #EDEDED 20%, transparent 100%);
-} */
+    border-radius: 16px;
+    padding: 48px;
+    border: 1px solid rgba(237, 237, 237, 0.5);
+}
 
-/* EDEDED */
-/* .auth-inner-windows {
-    position: relative;
-    height: 100%;
-    border-radius: 3.4em;
-    padding: 4.8em;
-    
-    background: linear-gradient(
-        to bottom,
-        rgba(35, 35, 35, 0.03) 0%,
-        rgba(35, 35, 35, 0) 50%
-    );
-    
-    border: 3px solid transparent;
-    background: 
-        linear-gradient(rgba(35, 35, 35, 0.03) 0%, rgba(35, 35, 35, 0) 50%) padding-box,
-        linear-gradient(to bottom, #EDEDED 20%, rgba(237, 237, 237, 0) 100%) border-box;
-} */
+.auth-inner-windows h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+    color: #232323;
+}
+
+.auth-inner-windows h3 {
+    font-size: 16px;
+    font-weight: normal;
+    color: #666;
+    margin-bottom: 32px;
+}
